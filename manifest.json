@@ -3,20 +3,21 @@
   "version": "0.0.1",
   "description": "Shows values of all hidden fields on the page.",
   "background": {
-    "scripts": [
-      "js/background.js",
-      "js/jquery-1.7.1.min.js"
-    ]
-  },
-  "icons": { "48": "images/icon48.png",
-			 "128": "images/icon128.png"
-			 },
+      "scripts": [
+         "js/background.js",
+         "js/jquery-1.7.1.min.js"
+      ]
+   },
+  "icons": {
+      "48": "images/icon48.png",
+      "128": "images/icon128.png"
+   },
   "content_scripts": [
-    {
-		"matches": ["http://*/*", "https://*/*"],
-		"js": ["js/content_script.js", "js/jquery-1.7.1.min.js"],
-		"all_frames": true
-	}
+      {
+         "matches": ["http://*/*", "https://*/*"],
+         "js": ["js/content_script.js", "js/jquery-1.7.1.min.js"],
+         "all_frames": true
+      }
   ],
   "permissions": [
     "tabs"
