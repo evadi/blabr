@@ -74,7 +74,7 @@ var UIBuilder = function() {
          var btn = document.createElement("BUTTON");
          var t = document.createTextNode("R");
          btn.appendChild(t);
-         btn.style.position = "absolute";
+         btn.style.position = "fixed";
          btn.style.bottom = 0;
          btn.style.right = 0;
          //Appending to DOM
