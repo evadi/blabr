@@ -4,28 +4,18 @@
   "description": "Shows values of all hidden fields on the page.",
   "background": {
       "scripts": [
-         "js/background.js",
-         "js/jquery-1.7.1.min.js"
+         "js/background.js"
       ]
    },
-  "icons": {
-      "48": "images/icon48.png",
-      "128": "images/icon128.png"
-   },
-  "content_scripts": [
+   "content_scripts": [
       {
          "matches": ["http://*/*", "https://*/*"],
-         "js": ["js/content_script.js", "js/jquery-1.7.1.min.js"],
-         "all_frames": true
+         "js": ["js/content_script.js"],
+         "all_frames": false
       }
-  ],
+   ],
   "permissions": [
     "tabs"
   ],
-  "page_action": {
-      "default_name": "Orchidsoft Development Aid",
-      "default_icon": "images/icon.png",
-      "default_popup": "popup.html"
-  },
   "manifest_version": 2
 }
