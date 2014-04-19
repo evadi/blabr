@@ -22,8 +22,8 @@ var uiBuilder;
 
 //Only when the page has loaded can elements be added to the DOM
 window.onload = function() {
+   //load the user's settings here then build the correct UI elements
    uiBuilder = new UIBuilder();
-   uiBuilder.showReloadOption();
    uiBuilder.showReloadOption();
 };
 
