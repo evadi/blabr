@@ -9,11 +9,15 @@
    },
    "content_scripts": [
       {
-         "matches": ["http://*/*", "https://*/*"],
+         "matches": ["http://localhost/*", "https://localhost/*"],
          "js": ["js/content_script.js"],
          "all_frames": false
       }
    ],
+   "browser_action": {
+      "default_title": "Show hidden fields - Settings",
+      "default_popup": "settings.html"
+   },
   "permissions": [
     "tabs"
   ],
