@@ -16,10 +16,13 @@ var settingsPage = (function () {
          chrome.storage.sync.clear();
       }
       
+      //interfaces with chrome storage API
       this.provider = new storageProvider();
       
+      //user setting for display target
       this.display = ko.observable("CONSOLE");
       
+      //handles the read and write of display binding
       this.display.forEdit = ko.computed({
          read: function () {
             return this.display();
@@ -42,6 +45,7 @@ var settingsPage = (function () {
       });
    };
    
+   //takes the raw settings object retrieved from storage and applies the values
    settingsPage.prototype.applySettings = function (settings) {
       //read the values from the settings object and assign it to this class
       if (settings !== undefined) {
@@ -54,6 +58,7 @@ var settingsPage = (function () {
       }
    };
    
+   //handles the UI element for saving settings - passes on the storage provider
    settingsPage.prototype.saveSettings = function () {
       //read state of the page and save the settings
       this.provider.saveSettings(ko.toJSON(this));
