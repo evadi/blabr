@@ -3,16 +3,20 @@
    <head>
       <title>Settings</title>
       <link href="css/settings.css" rel="stylesheet" type="text/css">
-      <script src="js/settings.js"></script>
+      <script src="js/knockout.js" type="text/javascript"></script>
+      <script src="js/settings.js" type="text/javascript"></script>
    </head>
    <body>
       <div class="container">
          <h1>Settings</h1>
          <div class="row">
-            <input type="radio" name="display" value="console" id="console" checked> <label for="console">Display data in the console</label>
+            <input type="radio" name="display" value="CONSOLE" id="console" data-bind="checked: display.forEdit"> <label for="console">Display data in the console</label>
          </div>
          <div class="row">
-            <input type="radio" name="display" value="page" id="page"> <label for="page">Display data in the page</label>
+            <input type="radio" name="display" value="PAGE" id="page" data-bind="checked: display.forEdit"> <label for="page">Display data in the page</label>
+         </div>
+         <div class="row">
+            <button data-bind="click: saveSettings">Save</button>
          </div>
       </div>
    </body>

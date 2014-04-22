@@ -14,12 +14,14 @@
          "all_frames": false
       }
    ],
+   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
    "browser_action": {
       "default_title": "Show hidden fields - Settings",
       "default_popup": "settings.html"
    },
   "permissions": [
-    "tabs"
+    "tabs",
+    "storage"
   ],
   "manifest_version": 2
 }
