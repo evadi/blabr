@@ -13,11 +13,8 @@ var settingsPage = (function () {
       
       //testing only
       if (shouldClear) {
-         chrome.storage.sync.clear();
+         evadi.blabr.data.clearSettings();
       }
-      
-      //interfaces with chrome storage API
-      this.provider = new storageProvider();
       
       //user setting for display target
       this.display = ko.observable("CONSOLE");
@@ -40,59 +37,28 @@ var settingsPage = (function () {
    settingsPage.prototype.initialise = function () {
       //read user settings and apply them
       var _this = this;
-      var settings = this.provider.getSettings(function (settings) {
+      var settings = evadi.blabr.data.getSettings(function (settings) {
          _this.applySettings(settings);
       });
    };
    
-   //takes the raw settings object retrieved from storage and applies the values
+   //takes the raw settings object retrieved from data provider and applies the values
    settingsPage.prototype.applySettings = function (settings) {
       //read the values from the settings object and assign it to this class
-      if (settings !== undefined) {
-         var parsedSettings = JSON.parse(settings);
-         
-         this.display(parsedSettings["display"]);
+      if (settings) {
+         this.display(settings["display"]);
       }
       else {
          console.log("no settings file found");
       }
    };
    
-   //handles the UI element for saving settings - passes on the storage provider
+   //handles the UI element for saving settings - passes on the data provider
    settingsPage.prototype.saveSettings = function () {
       //read state of the page and save the settings
-      this.provider.saveSettings(ko.toJSON(this));
+      evadi.blabr.data.saveSettings(ko.toJSON(this));
    };
    
    return settingsPage;
-   
-})();
-
-
-//used to read write from user storage
-var storageProvider = (function () {
-  
-   //constructor
-   function storageProvider () {
-   }
-  
-   //retrieve the users settings
-   storageProvider.prototype.getSettings = function (callback) {
-      chrome.storage.sync.get("settings", function (result) {
-         callback(result.settings);
-      });
-   };
-   
-   //take a settings object and save it to the user's settings
-   storageProvider.prototype.saveSettings = function (settings, callback) {
-      var data = {};
-      data["settings"] = settings;
-      
-      chrome.storage.sync.set(data, function () {
-         callback();
-      });
-   };
-   
-   return storageProvider;
    
 })();
