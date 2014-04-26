@@ -56,7 +56,9 @@ var settingsPage = (function () {
    //handles the UI element for saving settings - passes on the data provider
    settingsPage.prototype.saveSettings = function () {
       //read state of the page and save the settings
-      evadi.blabr.data.saveSettings(ko.toJSON(this));
+      evadi.blabr.data.saveSettings(ko.toJSON(this), function() {
+         console.log("settings saved");
+      });
    };
    
    return settingsPage;

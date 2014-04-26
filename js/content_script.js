@@ -1,5 +1,3 @@
-//No need to wrap in a window.onload as nothing fires when the page is loaded
-//but we do need to be ready to recieve requests straight away
 
 //Defines the actions that can be performed
 var actions = Object.freeze({
@@ -17,60 +15,112 @@ var display = Object.freeze({
    }
 });
 
-//Cached version of the UI builder we are using
-var uiBuilder;
-
-//Only when the page has loaded can elements be added to the DOM
-window.onload = function() {
-   //load the user's settings here then build the correct UI elements
-   uiBuilder = new UIBuilder();
-   uiBuilder.showReloadOption();
-};
-
 //Used to perform various operations on the page
-var pageManager = {
+var pageManager = (function() {
   
-   //sets the default for displaying data
-   displayTarget: display.CONSOLE,
+   //constructor
+   function pageManager () {
+      this.displayTarget = display.CONSOLE; //sets the default for displaying data
+      this.uiBuilder = new UIBuilder();
+      this.pageReader = new pageReader();
+   }
+   
+   //builds any UI elements that are necessary based on user settings
+   pageManager.prototype.buildPage = function () {
+      this.uiBuilder.showReloadOption();
+   };
    
    //main function used to display data to correct display target
-   displayData: function(displayType) {
+   pageManager.prototype.displayData = function (displayType) {
       if (displayType !== undefined) {
          this.displayTarget = display[displayType];
       }
       var data = this.gatherData();
       this.displayTarget(data);
-   },
+   };
    
    //scrapes the page gathering information about hidden fields and returns
-   gatherData: function () {
-      return new dataReader().getHiddenFields();
-   },
-  
-   //A method that can be initiated by any UI element which forces a reload
-   forceReload: function () {
-      chrome.extension.sendRequest({ action:actions.FORCERELOAD });
-   }
+   pageManager.prototype.gatherData = function () {
+      return this.pageReader.getHiddenFields();
+   };
    
-};
+   //A method that can be initiated by any UI element which forces a reload
+   pageManager.prototype.forceReload = function () {
+      chrome.extension.sendRequest({ action:actions.FORCERELOAD });
+   };
+   
+   return pageManager;
+   
+})();
 
 
 //Used to read various parts of the associated page
-var dataReader = function() {
+var pageReader = (function() {
    
-   this.getHiddenFields = function () {
-      return { name: "David" };
+   //constructor
+   function pageReader () {
+      
+   }
+   
+   //read all hidden fields from the page
+   pageReader.prototype.getHiddenFields = function () {
+      
+      var targets = [];
+      
+      //query all inputs in the DOM
+      var inputs = document.getElementsByTagName('input');
+
+      //filter inputs by hidden only
+      for(var i=0; i < inputs.length; i++) {
+         if(inputs[i].type=="hidden") {
+            targets.push(new targetElement(inputs[i]));
+         }
+      }
+      
+      return targets;
    };
    
-};
+   return pageReader;
+   
+})();
+
+//used to represent a hidden field that has been found on the page
+var targetElement = (function () {
+   
+   //constructor
+   function targetElement (element) {
+      if (element) {
+         this.element = element; //UI element
+         this.populate();
+      } else {
+         throw "UI element must be specified";
+      }
+   }
+   
+   //populates properties based on the element used to construct this class
+   targetElement.prototype.populate = function () {
+      this.value = this.element.value;
+      this.name = this.element.name;
+      this.id = this.element.id;
+      this.classes = this.element.className;
+      this.html = this.element.outerHTML;
+   };
+   
+   return targetElement;
+   
+})();
 
 //Used to generate various UI elements for the current page
-var UIBuilder = function() {
-   this._reloadOptionCreated = false;
+var UIBuilder = (function() {
+   
+   //constructor
+   function UIBuilder () {
+      this.reloadOptionCreated = false; //ensures no duplicate reload buttons
+   }
    
    //display the reload button used to regenerate data
-   this.showReloadOption = function () {
-      if (this._reloadOptionCreated === false) {
+   UIBuilder.prototype.showReloadOption = function () {
+      if (this.reloadOptionCreated === false) {
          var btn = document.createElement("BUTTON");
          var t = document.createTextNode("R");
          btn.appendChild(t);
@@ -80,16 +130,23 @@ var UIBuilder = function() {
          //Appending to DOM
          document.body.appendChild(btn);
          
-         btn.onclick = pageManager.forceReload;
+         btn.onclick = manager.forceReload;
       }
-      this._reloadOptionCreated = true;
+      this.reloadOptionCreated = true;
    };
    
-   this.showDataOverlay = function () {
+   //build the overlay used to display field data
+   UIBuilder.prototype.showDataOverlay = function () {
       
    };
    
-};
+   return UIBuilder;
+   
+})();
+
+
+var manager = new pageManager(); //main cache of the page manager
+manager.buildPage(); //add any necessary UI elements to page
 
 
 /* Chrome API's */
@@ -97,6 +154,6 @@ var UIBuilder = function() {
 //Listen for messages from the controller
 chrome.runtime.onMessage.addListener(function(request, sender, response) {
    if (request.action == actions.RELOAD) {
-      pageManager.displayData(request.target);
+      manager.displayData(request.target);
    }
 });
