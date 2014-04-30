@@ -1,7 +1,7 @@
 {
-  "name": "Reveal Hidden Fields",
+  "name": "Blabr",
   "version": "0.0.1",
-  "description": "Shows values of all hidden fields on the page.",
+  "description": "Shows information of all hidden fields on the page.",
   "background": {
       "scripts": [
          "js/background.js"
@@ -9,19 +9,28 @@
    },
    "content_scripts": [
       {
-         "matches": ["http://localhost/*", "https://localhost/*"],
+         "matches": ["http://*/", "https://*/"],
          "js": ["js/content_script.js"],
          "all_frames": false
       }
    ],
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
    "browser_action": {
-      "default_title": "Show hidden fields - Settings",
+      "default_title": "Blabr - Settings",
       "default_popup": "settings.html"
    },
   "permissions": [
     "tabs",
     "storage"
   ],
-  "manifest_version": 2
+  "manifest_version": 2,
+  "commands": {
+     "refresh_data": {
+        "suggested_key": {
+            "default": "Ctrl+Shift+H"
+        },
+        "description": "Refresh Data",
+        "global": false
+     }
+  }
 }

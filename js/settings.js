@@ -5,11 +5,11 @@ window.onload = function () {
    
 };
 
-//used to manage the settings page
+//manages the settings page
 var settingsPage = (function () {
    
-   //constructor
-   function settingsPage (shouldClear) {
+  //constructor
+  function settingsPage (shouldClear) {
       
       //testing only
       if (shouldClear) {
@@ -18,6 +18,7 @@ var settingsPage = (function () {
       
       //user setting for display target
       this.display = ko.observable("CONSOLE");
+      this.shortcuts = ko.observableArray();
       
       //handles the read and write of display binding
       this.display.forEdit = ko.computed({
@@ -37,8 +38,17 @@ var settingsPage = (function () {
    settingsPage.prototype.initialise = function () {
       //read user settings and apply them
       var _this = this;
-      var settings = evadi.blabr.data.getSettings(function (settings) {
+      evadi.blabr.data.getSettings(function (settings) {
          _this.applySettings(settings);
+      });
+      
+      //show the keyboard shortcuts associated with this application
+      evadi.blabr.shortcuts.getAll(function (commands) {
+         if (commands && commands.length > 1) {
+            commands.shift();
+            console.log(commands);
+            _this.shortcuts(commands);
+         }
       });
    };
    

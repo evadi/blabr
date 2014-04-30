@@ -1,8 +1,13 @@
-/* SPEC
-   - When a tab is updated and url matches an approved url then reload the data
-   - Currently we only write the data to the console
-   - Expose a javascript method to be able to reload the data
-*/
+/* Extensions that are used in this script */
+
+if (typeof String.prototype.startsWith != 'function') {
+   
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+  
+}
+
 
 //Defines the actions that can be used
 var actions = Object.freeze({
@@ -30,6 +35,16 @@ var controller = {
       if (this.activeTargetId !== 0) {
          chrome.tabs.sendMessage(this.activeTargetId, { action: actions.RELOAD, target: this.displayTarget });
       }
+   },
+   
+   //checks that a given url is in the approved list managed by the user
+   isApprovedUrl: function (urlToApprove) {
+      return (urlToApprove.startsWith("http://") || urlToApprove.startsWith("https://"));
+   },
+   
+   //clears the active tab
+   clearActiveTab: function () {
+      this.activeTargetId = 0;
    }
 };
 
@@ -39,19 +54,62 @@ var controller = {
 
 //Capture requests from other areas of the extension
 chrome.extension.onRequest.addListener(function (request, sender, sendRequest) {
+   
    if (request.action == actions.FORCERELOAD) {
       controller.activeTargetId = sender.tab.id;
       controller.update();
    }
+   
 });
 
 //when a tab is updated, and only when it is complete then check it's url
-//if it matches the approved list then write out the data to the chosen display method
+//if it matches the approved list then hold on to it's id
 chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
+   
    if (change.status == "complete") {
-      if (tabId != controller.activeTargetId) {
-        controller.activeTargetId = tabId;
-        controller.update();
+      
+      //check it's url to see if it is in the approved list
+      if(controller.isApprovedUrl(tab.url)) {
+         //make this the currently active tab
+         controller.activeTargetId = tabId;
+         console.log("target tab changed ", controller.activeTargetId);
       }
+      
     }
+    
+});
+
+//when a tab becomes active, then check it's url
+//if it matches the approved list then hold onto it's id
+chrome.tabs.onActivated.addListener(function (activeInfo) {
+
+   //get information about this tab
+   chrome.tabs.query({ active: true, status: "complete" }, function (tabs) {
+      
+      //we may have more than one result if the tab has dev tools open
+      tabs.forEach(function (tab) {
+         
+         //now check the tabs url
+         if (controller.isApprovedUrl(tab.url)) {
+            //make this the currently active tab
+            controller.activeTargetId = tab.id;
+            console.log("target tab changed ", controller.activeTargetId);
+         } else {
+            //remove the currently active tab
+            controller.clearActiveTab();
+         }
+         
+      });
+      
+   });
+   
+});
+
+//Listen for keyboard shortcut presses
+chrome.commands.onCommand.addListener(function (command) {
+   
+   if (command === "refresh_data") {
+      controller.update();
+   }
+   
 });

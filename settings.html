@@ -17,6 +17,17 @@
             <input type="radio" name="display" value="PAGE" id="page" data-bind="checked: display.forEdit"> <label for="page">Display data in the page</label>
          </div>
          <div class="row">
+            Keyboard Shortcuts:
+            <div data-bind="template: { name: 'shortcuts-template', foreach: shortcuts, if: shortcuts }"></div>
+            
+            <script type="text/html" id="shortcuts-template">
+               <div class="row">
+                  <span data-bind="text: description"></span>
+                  <span data-bind="text: shortcut"></span>
+               </div>
+            </script>
+         </div>
+         <div class="row">
             <button data-bind="click: saveSettings">Save</button>
          </div>
       </div>

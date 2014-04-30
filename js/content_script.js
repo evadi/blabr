@@ -8,7 +8,7 @@ var actions = Object.freeze({
 //Defines the ways in which data can be displayed to the user
 var display = Object.freeze({
    CONSOLE: function (data) {
-      console.log(data, "Showing hidden fields");
+      console.log(data, "Blabr output");
    },
    PAGE: function (data) {
       
