@@ -4,8 +4,10 @@
   "description": "Shows information of all hidden fields on the page.",
   "background": {
       "scripts": [
+         "js/blabr.js",
          "js/background.js"
-      ]
+      ],
+      "persistent": false
    },
    "content_scripts": [
       {
@@ -21,7 +23,8 @@
    },
   "permissions": [
     "tabs",
-    "storage"
+    "storage",
+    "background"
   ],
   "manifest_version": 2,
   "commands": {
@@ -29,7 +32,7 @@
         "suggested_key": {
             "default": "Ctrl+Shift+H"
         },
-        "description": "Refresh Data",
+        "description": "Show hidden field information",
         "global": false
      }
   }

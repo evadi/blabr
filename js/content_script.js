@@ -11,7 +11,7 @@ var display = Object.freeze({
       console.log(data, "Blabr output");
    },
    PAGE: function (data) {
-      
+      console.log("page output");
    }
 });
 
@@ -24,11 +24,6 @@ var pageManager = (function() {
       this.uiBuilder = new UIBuilder();
       this.pageReader = new pageReader();
    }
-   
-   //builds any UI elements that are necessary based on user settings
-   pageManager.prototype.buildPage = function () {
-      this.uiBuilder.showReloadOption();
-   };
    
    //main function used to display data to correct display target
    pageManager.prototype.displayData = function (displayType) {
@@ -115,25 +110,8 @@ var UIBuilder = (function() {
    
    //constructor
    function UIBuilder () {
-      this.reloadOptionCreated = false; //ensures no duplicate reload buttons
+      
    }
-   
-   //display the reload button used to regenerate data
-   UIBuilder.prototype.showReloadOption = function () {
-      if (this.reloadOptionCreated === false) {
-         var btn = document.createElement("BUTTON");
-         var t = document.createTextNode("R");
-         btn.appendChild(t);
-         btn.style.position = "fixed";
-         btn.style.bottom = 0;
-         btn.style.right = 0;
-         //Appending to DOM
-         document.body.appendChild(btn);
-         
-         btn.onclick = manager.forceReload;
-      }
-      this.reloadOptionCreated = true;
-   };
    
    //build the overlay used to display field data
    UIBuilder.prototype.showDataOverlay = function () {
@@ -146,7 +124,6 @@ var UIBuilder = (function() {
 
 
 var manager = new pageManager(); //main cache of the page manager
-manager.buildPage(); //add any necessary UI elements to page
 
 
 /* Chrome API's */

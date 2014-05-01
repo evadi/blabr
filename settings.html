@@ -4,31 +4,36 @@
       <title>Settings</title>
       <link href="css/settings.css" rel="stylesheet" type="text/css">
       <script src="js/knockout.js" type="text/javascript"></script>
+      <script src="js/knockout-mapping.js" type="text/javascript"></script>
       <script src="js/blabr.js" type="text/javascript"></script>
       <script src="js/settings.js" type="text/javascript"></script>
    </head>
    <body>
       <div class="container">
+         <div class="information success" data-bind="css: { active: settingsSaved }">Settings saved</div>
          <h1>Settings</h1>
-         <div class="row">
-            <input type="radio" name="display" value="CONSOLE" id="console" data-bind="checked: display.forEdit"> <label for="console">Display data in the console</label>
+         <p>You can choose where you would like field data to be displayed.</p>
+         <div class="options">
+            <ul>
+               <li><a id="console" data-bind="click: selectConsole, css: { selected: display() === 'CONSOLE' }">Display in console</a></li>
+               <li><a id="page" data-bind="click: selectPage, css: { selected: display() === 'PAGE' }">Display in page</a></li>
+            </ul>
          </div>
+         <div class="clear"></div>
          <div class="row">
-            <input type="radio" name="display" value="PAGE" id="page" data-bind="checked: display.forEdit"> <label for="page">Display data in the page</label>
-         </div>
-         <div class="row">
-            Keyboard Shortcuts:
+            <h2>Keyboard Shortcuts</h2>
             <div data-bind="template: { name: 'shortcuts-template', foreach: shortcuts, if: shortcuts }"></div>
             
             <script type="text/html" id="shortcuts-template">
-               <div class="row">
-                  <span data-bind="text: description"></span>
-                  <span data-bind="text: shortcut"></span>
+               <div class="command">
+                  <div class="label" data-bind="text: description"></div>
+                  <div class="shortcut" data-bind="text: shortcut"></div>
+                  <div class="clear"></div>
                </div>
             </script>
          </div>
          <div class="row">
-            <button data-bind="click: saveSettings">Save</button>
+            <button id="save" data-bind="click: saveSettings">Save</button>
          </div>
       </div>
    </body>

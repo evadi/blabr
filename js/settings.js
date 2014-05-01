@@ -1,9 +1,18 @@
+var controller;
+
 window.onload = function () {
    
    var page = new settingsPage(false);
    page.initialise();
    
+   controller = chrome.extension.getBackgroundPage().controller;
 };
+
+//Allows different display targets to be used via constants
+var displayTypes = Object.freeze({
+   CONSOLE: "CONSOLE",
+   PAGE: "PAGE"
+});
 
 //manages the settings page
 var settingsPage = (function () {
@@ -17,9 +26,16 @@ var settingsPage = (function () {
       }
       
       //user setting for display target
-      this.display = ko.observable("CONSOLE");
+      this.display = ko.observable(displayTypes.CONSOLE);
       this.shortcuts = ko.observableArray();
-      
+      this.settingsSaved = ko.observable(false);
+      this.selectConsole = function () {
+         this.display(displayTypes.CONSOLE);
+      };
+      this.selectPage = function () {
+         this.display(displayTypes.PAGE);
+      };
+
       //handles the read and write of display binding
       this.display.forEdit = ko.computed({
          read: function () {
@@ -46,7 +62,6 @@ var settingsPage = (function () {
       evadi.blabr.shortcuts.getAll(function (commands) {
          if (commands && commands.length > 1) {
             commands.shift();
-            console.log(commands);
             _this.shortcuts(commands);
          }
       });
@@ -58,16 +73,19 @@ var settingsPage = (function () {
       if (settings) {
          this.display(settings["display"]);
       }
-      else {
-         console.log("no settings file found");
-      }
    };
    
    //handles the UI element for saving settings - passes on the data provider
    settingsPage.prototype.saveSettings = function () {
       //read state of the page and save the settings
-      evadi.blabr.data.saveSettings(ko.toJSON(this), function() {
-         console.log("settings saved");
+      var _this = this;
+      var settings = ko.toJSON(this);
+      evadi.blabr.data.saveSettings(settings, function() {
+         _this.settingsSaved(true);
+         controller.updateSettings(ko.mapping.toJS(_this));
+         window.setTimeout(function () {
+            _this.settingsSaved(false);
+         }, 2000);
       });
    };
    

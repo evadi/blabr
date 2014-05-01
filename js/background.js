@@ -22,38 +22,66 @@ var displayTypes = Object.freeze({
 });
 
 //controls the operation of the extension
-var controller = {
+var Controller = (function () {
    
-   //Tab we are currently controlling
-   activeTargetId: 0,
-   
-   //Where is the data being displayed
-   displayTarget: displayTypes.CONSOLE,
+   //constructor
+   function Controller () {
+      
+      //Tab we are currently controlling
+      this.activeTargetId = 0;
+      
+      //Where is the data being displayed
+      this.displayTarget = displayTypes.CONSOLE;
+      
+      //load the users settings
+      this.loadSettings();
+   }
    
    //send request to regenerate field data
-   update: function () {
+   Controller.prototype.update = function () {
       if (this.activeTargetId !== 0) {
          chrome.tabs.sendMessage(this.activeTargetId, { action: actions.RELOAD, target: this.displayTarget });
       }
-   },
+   };
    
    //checks that a given url is in the approved list managed by the user
-   isApprovedUrl: function (urlToApprove) {
+   Controller.prototype.isApprovedUrl = function (urlToApprove) {
       return (urlToApprove.startsWith("http://") || urlToApprove.startsWith("https://"));
-   },
+   };
    
    //clears the active tab
-   clearActiveTab: function () {
+   Controller.prototype.clearActiveTab = function () {
       this.activeTargetId = 0;
-   }
-};
+   };
+   
+   //reads the latest settings
+   Controller.prototype.updateSettings = function (newSettings) {
+      if (newSettings) {
+         this.displayTarget = newSettings["display"];
+         console.log(this.displayTarget);
+      }
+   };
+   
+   //load user settings and apply them
+   Controller.prototype.loadSettings = function () {
+      var _this = this;
+      evadi.blabr.data.getSettings(function (settings) {
+         _this.updateSettings(settings);
+      });
+   };
+   
+   return Controller;
+   
+})();
 
+//create the main controller instance
+var controller = new Controller();
 
 
 /* Chrome API's */
 
 //Capture requests from other areas of the extension
-chrome.extension.onRequest.addListener(function (request, sender, sendRequest) {
+chrome.extension.onMessage.addListener(function (request, sender, sendRequest) {
    
    if (request.action == actions.FORCERELOAD) {
       controller.activeTargetId = sender.tab.id;
@@ -94,9 +122,6 @@ chrome.tabs.onActivated.addListener(function (activeInfo) {
             //make this the currently active tab
             controller.activeTargetId = tab.id;
             console.log("target tab changed ", controller.activeTargetId);
-         } else {
-            //remove the currently active tab
-            controller.clearActiveTab();
          }
          
       });
