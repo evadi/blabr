@@ -7,12 +7,12 @@
          "js/blabr.js",
          "js/background.js"
       ],
-      "persistent": false
+      "persistent": true
    },
    "content_scripts": [
       {
-         "matches": ["http://*/", "https://*/"],
-         "js": ["js/content_script.js"],
+         "matches": ["<all_urls>"],
+         "js": ["js/blabr_page.js"],
          "all_frames": false
       }
    ],
