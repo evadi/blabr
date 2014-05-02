@@ -10,8 +10,10 @@ var pageManager = (function() {
   
    //constructor
    function pageManager () {
-      //Defines the ways in which data can be displayed to the user
+      //cache this
       var _this = this;
+      
+      //output method interface
       this.display = Object.freeze({
          CONSOLE: {
             output: function (data) {
@@ -31,9 +33,16 @@ var pageManager = (function() {
          }
       });
 
-      this.displayTarget = this.display.CONSOLE; //sets the default for displaying data
+      //sets the default output
+      this.displayTarget = this.display.CONSOLE;
+      
+      //key used to get the correct display interface
       this.displayTargetKey = "CONSOLE";
+      
+      //object used to build ui elements
       this.uiBuilder = new UIBuilder();
+      
+      //object used to read information from the page
       this.pageReader = new pageReader();
    }
    
