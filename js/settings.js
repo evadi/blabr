@@ -71,7 +71,7 @@ var settingsPage = (function () {
    settingsPage.prototype.applySettings = function (settings) {
       //read the values from the settings object and assign it to this class
       if (settings) {
-         this.display(settings["display"]);
+         this.display(settings.display);
       }
    };
    

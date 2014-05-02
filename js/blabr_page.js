@@ -11,7 +11,7 @@ var display = Object.freeze({
       console.log(data, "Blabr output");
    },
    PAGE: function (data) {
-      console.log("page output");
+      manager.uiBuilder.toggleOverlay(data, true);
    }
 });
 
@@ -105,16 +105,100 @@ var targetElement = (function () {
    
 })();
 
-//Used to generate various UI elements for the current page
+//Builds various elements to be rendered onto a page
 var UIBuilder = (function() {
    
    //constructor
    function UIBuilder () {
-      
+      this.overlayId = "blabrOverlay";
    }
    
+   //checks to see if overlay exists, if not it creates one
+   UIBuilder.prototype.buildOverlay = function () {
+      
+      var overlay = this.overlay;
+      
+      if (!this.overlay) {
+         
+         overlay = document.createElement("div");
+         overlay.id = this.overlayId;
+         overlay.style.background = "#fff";
+         overlay.style.position = "fixed";
+         overlay.style.bottom = "0"
+         overlay.style.left = "0";
+         overlay.style.right = "0";
+         overlay.style.top = "100%";
+         overlay.style.overflowY = "scroll";
+         overlay.style.boxShadow = "0 -5px 10px #999";
+         overlay.style.zIndex = "900000";
+         overlay.style.fontFamily = "Arial";
+         overlay.style.fontSize = "11px";
+         overlay.style.color = "#333";
+         
+         document.body.appendChild(overlay);
+      
+      }
+      
+      this.overlay = overlay;
+   };
+   
+   //builds the data elements
+   UIBuilder.prototype.buildData = function (overlay, data) {
+      
+      //first clear the overlay
+      overlay.innerHTML = "";
+      
+      var list = document.createElement("ul");
+      list.style.listStyle = "none";
+      list.style.listStyleType = "none";
+      list.style.margin = "0";
+      list.style.padding = "0";
+      
+      data.forEach(function (item, index) {
+         
+         var isLeft = (index % 2);
+         
+         var listItem = document.createElement("li");
+         listItem.style.float = isLeft ? "left" : "right";
+         listItem.style.width = "50%";
+         
+         var field = document.createElement("div");
+         field.style.background = "#ddd";
+         field.style.fontFamily = "Arial";
+         field.style.fontSize = "12px";
+         field.style.color = "#333";
+         field.style.padding = "8px";
+         field.style.margin = "20px";
+         field.style.overflow = "hidden";
+         field.style.textOverflow = "ellipsis";
+         field.style.whiteSpace = "nowrap";
+         field.innerHTML = item.name ? item.name : "not available";
+         
+         listItem.appendChild(field);
+         list.appendChild(listItem);
+         
+      });
+      
+      overlay.appendChild(list);
+      
+   };
+   
    //build the overlay used to display field data
-   UIBuilder.prototype.showDataOverlay = function () {
+   UIBuilder.prototype.toggleOverlay = function (data) {
+      this.buildOverlay();
+      var isActive = (this.overlay.style.top === "50%");
+      
+      this.buildData(this.overlay, data);
+      //now toggle the overlay
+      if (isActive) {
+         this.overlay.style.top = "100%";
+      } else {
+         this.overlay.style.top = "50%";
+      }
+   };
+   
+   //shows the overlay to the user
+   UIBuilder.prototype.showOverlay = function () {
       
    };
    
