@@ -27,7 +27,12 @@
             <script type="text/html" id="shortcuts-template">
                <div class="command">
                   <div class="label" data-bind="text: description"></div>
-                  <div class="shortcut" data-bind="text: shortcut"></div>
+                  <!-- ko if: shortcut -->
+                     <div class="shortcut" data-bind="text: shortcut"></div>
+                  <!-- /ko -->
+                  <!-- ko if: shortcut === "" -->
+                     <div class="shortcut" >Unassigned</div>
+                  <!-- /ko -->
                   <div class="clear"></div>
                </div>
             </script>

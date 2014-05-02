@@ -5,22 +5,34 @@ var actions = Object.freeze({
    FORCERELOAD: "force"
 });
 
-//Defines the ways in which data can be displayed to the user
-var display = Object.freeze({
-   CONSOLE: function (data) {
-      console.log(data, "Blabr output");
-   },
-   PAGE: function (data) {
-      manager.uiBuilder.toggleOverlay(data, true);
-   }
-});
-
 //Used to perform various operations on the page
 var pageManager = (function() {
   
    //constructor
    function pageManager () {
-      this.displayTarget = display.CONSOLE; //sets the default for displaying data
+      //Defines the ways in which data can be displayed to the user
+      var _this = this;
+      this.display = Object.freeze({
+         CONSOLE: {
+            output: function (data) {
+               console.log(data, "Blabr output");
+            },
+            clear: function () {
+               //no implementation for this output method
+            }
+         },
+         PAGE: {
+            output: function (data) {
+               _this.uiBuilder.toggleOverlay(data, true);
+            },
+            clear: function () {
+               _this.uiBuilder.removeOverlay();
+            }
+         }
+      });
+
+      this.displayTarget = this.display.CONSOLE; //sets the default for displaying data
+      this.displayTargetKey = "CONSOLE";
       this.uiBuilder = new UIBuilder();
       this.pageReader = new pageReader();
    }
@@ -28,10 +40,14 @@ var pageManager = (function() {
    //main function used to display data to correct display target
    pageManager.prototype.displayData = function (displayType) {
       if (displayType !== undefined) {
-         this.displayTarget = display[displayType];
+         if (displayType !== this.displayTargetKey)
+            this.displayTarget.clear();
+   
+         this.displayTarget = this.display[displayType];
+         this.displayTargetKey = displayType;
       }
       var data = this.gatherData();
-      this.displayTarget(data);
+      this.displayTarget.output(data);
    };
    
    //scrapes the page gathering information about hidden fields and returns
@@ -118,7 +134,7 @@ var UIBuilder = (function() {
       
       var overlay = this.overlay;
       
-      if (!this.overlay) {
+      if (!overlay) {
          
          overlay = document.createElement("div");
          overlay.id = this.overlayId;
@@ -134,12 +150,14 @@ var UIBuilder = (function() {
          overlay.style.fontFamily = "Arial";
          overlay.style.fontSize = "11px";
          overlay.style.color = "#333";
+         overlay.style.transition = "top 0.4s";
          
          document.body.appendChild(overlay);
-      
+         
+         this.overlay = overlay;
+         
       }
       
-      this.overlay = overlay;
    };
    
    //builds the data elements
@@ -168,7 +186,7 @@ var UIBuilder = (function() {
          field.style.fontSize = "12px";
          field.style.color = "#333";
          field.style.padding = "8px";
-         field.style.margin = "20px";
+         field.style.margin = "15px";
          field.style.overflow = "hidden";
          field.style.textOverflow = "ellipsis";
          field.style.whiteSpace = "nowrap";
@@ -189,6 +207,7 @@ var UIBuilder = (function() {
       var isActive = (this.overlay.style.top === "50%");
       
       this.buildData(this.overlay, data);
+      
       //now toggle the overlay
       if (isActive) {
          this.overlay.style.top = "100%";
@@ -197,9 +216,12 @@ var UIBuilder = (function() {
       }
    };
    
-   //shows the overlay to the user
-   UIBuilder.prototype.showOverlay = function () {
-      
+   //removes the overlay from the DOM
+   UIBuilder.prototype.removeOverlay = function () {
+      if (this.overlay) {
+         document.body.removeChild(this.overlay);
+         this.overlay = undefined;
+      }
    };
    
    return UIBuilder;

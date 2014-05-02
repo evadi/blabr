@@ -82,10 +82,12 @@ var settingsPage = (function () {
       var settings = ko.toJSON(this);
       evadi.blabr.data.saveSettings(settings, function() {
          _this.settingsSaved(true);
+         
          controller.updateSettings(ko.mapping.toJS(_this));
          window.setTimeout(function () {
             _this.settingsSaved(false);
          }, 2000);
+         
       });
    };
    
