@@ -74,28 +74,8 @@ var Controller = (function () {
    
 })();
 
-//Builds various elements to be rendered onto a page
-var UIBuilder = (function() {
-   
-   //constructor
-   function UIBuilder () {
-      
-   }
-   
-   //build the overlay used to display field data
-   UIBuilder.prototype.showDataOverlay = function () {
-      
-   };
-   
-   return UIBuilder;
-   
-})();
-
 //create the main controller instance
 var controller = new Controller();
-
-//create a UIBuilder for use by the content scripts
-var uiBuilder = new UIBuilder();
 
 
 /* Chrome API's */
