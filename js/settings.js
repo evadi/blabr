@@ -27,26 +27,22 @@ var settingsPage = (function () {
       
       //user setting for display target
       this.display = ko.observable(displayTypes.CONSOLE);
+      
+      //keyboard shortcuts for this application
       this.shortcuts = ko.observableArray();
+      
+      //flag used to show a saved message to the user
       this.settingsSaved = ko.observable(false);
+      
+      //selects console as an output method
       this.selectConsole = function () {
          this.display(displayTypes.CONSOLE);
       };
+      
+      //selects page as an output method
       this.selectPage = function () {
          this.display(displayTypes.PAGE);
       };
-
-      //handles the read and write of display binding
-      this.display.forEdit = ko.computed({
-         read: function () {
-            return this.display();
-         },
-         write: function (newValue) {
-            this.display(newValue);
-         },
-         owner: this
-      });
-      ko.applyBindings(this);
       
    }
    
