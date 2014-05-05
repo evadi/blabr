@@ -5,6 +5,7 @@ window.onload = function () {
    var page = new settingsPage(false);
    page.initialise();
    
+   //cache the controller from the background page
    controller = chrome.extension.getBackgroundPage().controller;
 };
 
@@ -44,6 +45,9 @@ var settingsPage = (function () {
          this.display(displayTypes.PAGE);
       };
       
+      //initialise the knockoutjs bindings
+      ko.applyBindings(this);
+      
    }
    
    //initialise the settings page
@@ -65,7 +69,7 @@ var settingsPage = (function () {
    
    //takes the raw settings object retrieved from data provider and applies the values
    settingsPage.prototype.applySettings = function (settings) {
-      //read the values from the settings object and assign it to this class
+      //set properties of this class based on the settings supplied
       if (settings) {
          this.display(settings.display);
       }
@@ -75,11 +79,18 @@ var settingsPage = (function () {
    settingsPage.prototype.saveSettings = function () {
       //read state of the page and save the settings
       var _this = this;
+      
+      //seralise this class to be saved
       var settings = ko.toJSON(this);
+      
+      //save the settings object
       evadi.blabr.data.saveSettings(settings, function() {
          _this.settingsSaved(true);
          
+         //inform the controller of the new settings
          controller.updateSettings(ko.mapping.toJS(_this));
+         
+         //display a message to the user indicating settings have been saved
          window.setTimeout(function () {
             _this.settingsSaved(false);
          }, 2000);

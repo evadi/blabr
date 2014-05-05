@@ -138,6 +138,28 @@ var UIBuilder = (function() {
       this.overlayId = "blabrOverlay";
    }
    
+   //create a standard label element for data
+   UIBuilder.prototype.createLabelElement = function (label) {
+      
+      var labelField = document.createElement("span");
+      labelField.style.fontWeight = "bold";
+      labelField.style.margin = "0 10px 0 0";
+      labelField.innerHTML = label;
+      
+      return labelField;
+      
+   };
+   
+   //create a standard value element for data
+   UIBuilder.prototype.createValueElement = function (value) {
+      
+      var valueField = document.createElement("span");
+      valueField.innerHTML = value;
+      
+      return valueField;
+      
+   };
+   
    //checks to see if overlay exists, if not it creates one
    UIBuilder.prototype.buildOverlay = function () {
       
@@ -153,7 +175,7 @@ var UIBuilder = (function() {
          overlay.style.left = "0";
          overlay.style.right = "0";
          overlay.style.top = "100%";
-         overlay.style.overflowY = "scroll";
+         overlay.style.overflowY = "auto";
          overlay.style.boxShadow = "0 -5px 10px #999";
          overlay.style.zIndex = "900000";
          overlay.style.fontFamily = "Arial";
@@ -181,25 +203,55 @@ var UIBuilder = (function() {
       list.style.margin = "0";
       list.style.padding = "0";
       
+      var _this = this;
       data.forEach(function (item, index) {
          
-         var isLeft = (index % 2);
+         var isOdd = (index % 2);
          
          var listItem = document.createElement("li");
-         listItem.style.float = isLeft ? "left" : "right";
+         listItem.style.float = isOdd ? "right" : "left";
          listItem.style.width = "50%";
+         listItem.style.textAlign = "left";
+         listItem.style.lineHeight = "15px";
          
          var field = document.createElement("div");
-         field.style.background = "#ddd";
+         field.style.background = "#DAE8F7";
          field.style.fontFamily = "Arial";
-         field.style.fontSize = "12px";
+         field.style.fontSize = "11px";
          field.style.color = "#333";
          field.style.padding = "8px";
          field.style.margin = "15px";
          field.style.overflow = "hidden";
          field.style.textOverflow = "ellipsis";
          field.style.whiteSpace = "nowrap";
-         field.innerHTML = item.name ? item.name : "not available";
+         field.style.cursor = "pointer";
+         field.style.border = "1px solid #DAE8F7";
+         field.title = item.html;
+         
+         var nameLabelField = _this.createLabelElement("Name: ");
+         var nameValueField = _this.createValueElement(item.name ? item.name : "not assigned");
+         
+         var valueLabelField = _this.createLabelElement("Value: ");
+         var valueField = _this.createValueElement(item.value);
+         
+         field.appendChild(nameLabelField);
+         field.appendChild(nameValueField);
+         field.appendChild(document.createElement("br"));
+         field.appendChild(valueLabelField);
+         field.appendChild(valueField);
+         
+         
+         field.onmouseover = function () {
+            //style the element with a glowing border
+            this.style.boxShadow = "0 0 8px rgba(102,175,233,.8)";
+            this.style.border = "1px solid #66afe9";
+         };
+         
+         field.onmouseout = function () {
+            //remove the border style
+            this.style.boxShadow = "";
+            this.style.border = "1px solid #DAE8F7";
+         };
          
          listItem.appendChild(field);
          list.appendChild(listItem);
