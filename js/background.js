@@ -46,7 +46,7 @@ var Controller = (function () {
 
    //checks that a given url is in the approved list managed by the user
    Controller.prototype.isApprovedUrl = function (urlToApprove) {
-      return true; //(urlToApprove.startsWith("http://") || urlToApprove.startsWith("https://"));
+      return (urlToApprove.startsWith("http://") || urlToApprove.startsWith("https://"));
    };
 
    //clears the active tab
