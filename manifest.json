@@ -1,7 +1,7 @@
 {
   "name": "Blabr",
   "version": "0.0.1",
-  "description": "Shows information of all hidden fields on the page.",
+  "description": "Debugging tool for developers showing various information about the DOM.",
   "background": {
       "scripts": [
          "js/blabr.js",
@@ -28,12 +28,19 @@
   ],
   "manifest_version": 2,
   "commands": {
-     "refresh_data": {
+     "hidden_fields": {
         "suggested_key": {
             "default": "Ctrl+Shift+H"
         },
         "description": "Show hidden field information",
         "global": false
+     },
+     "max_lengths": {
+       "suggested_key": {
+         "default": "Ctrl+Shift+M"
+       },
+       "description": "Show max length information",
+       "global": false
      }
   }
 }
