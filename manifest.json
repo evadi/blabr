@@ -27,7 +27,6 @@
     "background"
   ],
   "manifest_version": 2,
-  "update_url": "http://chromeextensionupdate.orchidsoft.int:5000/blabr/updates.xml",
   "commands": {
      "hidden_fields": {
         "suggested_key": {
