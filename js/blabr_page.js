@@ -43,20 +43,19 @@ var PageReader = (function() {
 
       //query all inputs in the DOM
       var inputs = document.getElementsByTagName('input');
-      var areas = document.getElementsByTagName('textarea');
+     // var areas = document.getElementsByTagName('textarea');
 
       //filter inputs by text only
       for(var i=0; i < inputs.length; i++) {
          if(inputs[i].type=="text") {
-            console.log(inputs[i]);
             targets.push(new targetElement(inputs[i]));
          }
       }
 
       //add textareas to the targets array
-      for(var i=0; i < areas.length; i++) {
-         targets.push(new targetElement(areas[i]));
-      }
+      // for(var i=0; i < areas.length; i++) {
+      //   targets.push(new targetElement(areas[i]));
+      // }
 
       return targets;
    };
@@ -159,14 +158,14 @@ var UIBuilder = (function() {
          overlay.style.bottom = "0"
          overlay.style.left = "0";
          overlay.style.right = "0";
-         overlay.style.top = "100%";
+         overlay.style.height = "0px";
          overlay.style.overflowY = "auto";
          overlay.style.boxShadow = "0 -5px 10px #999";
          overlay.style.zIndex = "900000";
          overlay.style.fontFamily = "Arial";
          overlay.style.fontSize = "11px";
          overlay.style.color = "#333";
-         overlay.style.transition = "top 0.4s";
+         overlay.style.transition = "height 0.4s";
 
          document.body.appendChild(overlay);
 
@@ -179,15 +178,19 @@ var UIBuilder = (function() {
    //build the overlay used to display field data
    UIBuilder.prototype.toggleOverlay = function (data) {
       this.buildOverlay();
-      var isActive = (this.overlay.style.top === "50%");
+      var isActive = (this.overlay.style.height === "400px");
 
       this.buildData(this.overlay, data);
 
+      var body = document.getElementsByTagName("body")[0];
+
       //now toggle the overlay
       if (isActive) {
-         this.overlay.style.top = "100%";
+        body.style.padding = null;
+        this.overlay.style.height = "0px";
       } else {
-         this.overlay.style.top = "50%";
+        body.style.padding = "0px 0px 400px 0px";
+        this.overlay.style.height = "400px";
       }
    };
 
@@ -381,6 +384,9 @@ var UIMaxLengthBuilder = (function (_super) {
           value = "No character limit restriction set";
           status = 0;
          }
+         
+         if (valAttr === undefined && standardAttr === undefined)
+          value = "No character limit restriction or validation rule set";
 
          if (status == 2) {
           var maxLengthVal = _this.value(valAttr, standardAttr);
@@ -538,7 +544,6 @@ var manager = new pageManager(); //main cache of the page manager
 //Listen for messages from the controller
 chrome.runtime.onMessage.addListener(function(request, sender, response) {
    if (request.action == actions.RELOAD) {
-      console.log(request);
       manager.displayData(request.command, request.target);
    }
 });

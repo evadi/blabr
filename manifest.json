@@ -1,6 +1,6 @@
 {
   "name": "Blabr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Debugging tool for developers showing various information about the DOM.",
   "background": {
       "scripts": [
@@ -27,6 +27,7 @@
     "background"
   ],
   "manifest_version": 2,
+  "update_url": "http://chromeextensionupdate.orchidsoft.int:5000/blabr/updates.xml",
   "commands": {
      "hidden_fields": {
         "suggested_key": {
