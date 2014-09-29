@@ -47,7 +47,7 @@ var PageReader = (function() {
 
       //filter inputs by text only
       for(var i=0; i < inputs.length; i++) {
-         if(inputs[i].type=="text") {
+         if(inputs[i].type == "text" || inputs[i].type == "password") {
             targets.push(new targetElement(inputs[i]));
          }
       }
@@ -384,7 +384,7 @@ var UIMaxLengthBuilder = (function (_super) {
           value = "No character limit restriction set";
           status = 0;
          }
-         
+
          if (valAttr === undefined && standardAttr === undefined)
           value = "No character limit restriction or validation rule set";
 
