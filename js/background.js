@@ -31,7 +31,7 @@ var Controller = (function () {
       this.activeTargetId = 0;
 
       //Where is the data being displayed
-      this.displayTarget = displayTypes.CONSOLE;
+      this.displayTarget = displayTypes.PAGE;
 
       //load the users settings
       this.loadSettings();

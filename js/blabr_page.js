@@ -295,10 +295,10 @@ var UIMaxLengthBuilder = (function (_super) {
     }
 
     //loop attributes on specific element and check for max length validation
-    //attribute
+    //attributes. Includes custom fluent validation rules
     UIMaxLengthBuilder.prototype.validationAttribute = function (attributes) {
       for(var i = 0; i < attributes.length; i++){
-        if (attributes[i].name === "data-val-length-max"){
+        if (attributes[i].name === "data-val-length-max" || attributes[i].name === "data-val-maxlength-data"){
           return attributes[i];
         }
       }
