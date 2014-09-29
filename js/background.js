@@ -58,7 +58,6 @@ var Controller = (function () {
    Controller.prototype.updateSettings = function (newSettings) {
       if (newSettings) {
          this.displayTarget = newSettings.display;
-         console.log(this.displayTarget);
       }
    };
 
@@ -78,14 +77,47 @@ var Controller = (function () {
 var controller = new Controller();
 
 
+//find the active tab
+function findActiveTab() {
+
+  //get information about this tab
+  chrome.tabs.query({ active: true, status: "complete", lastFocusedWindow: true }, function (tabs) {
+
+    //we may have more than one result if the tab has dev tools open
+    tabs.forEach(function (tab) {
+
+      setActiveTabIfValidUrl(tab);
+
+    });
+
+  });
+
+}
+
+//set the active tab if the tab url matches an approved one
+function setActiveTabIfValidUrl(tab) {
+
+  if (controller.isApprovedUrl(tab.url)) {
+
+    //make this the currently active tab
+    controller.activeTargetId = tab.id;
+
+  }
+
+}
+
+
 /* Chrome API's */
 
 //Capture requests from other areas of the extension
 chrome.extension.onMessage.addListener(function (request, sender, sendRequest) {
 
    if (request.action == actions.FORCERELOAD) {
+
       controller.activeTargetId = sender.tab.id;
       controller.update();
+
+
    }
 
 });
@@ -96,12 +128,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 
    if (change.status == "complete") {
 
-      //check it's url to see if it is in the approved list
-      if(controller.isApprovedUrl(tab.url)) {
-         //make this the currently active tab
-         controller.activeTargetId = tabId;
-         console.log("target tab changed ", controller.activeTargetId);
-      }
+      setActiveTabIfValidUrl(tab);
 
     }
 
@@ -111,32 +138,27 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 //if it matches the approved list then hold onto it's id
 chrome.tabs.onActivated.addListener(function (activeInfo) {
 
-   //get information about this tab
-   chrome.tabs.query({ active: true, status: "complete" }, function (tabs) {
+   findActiveTab();
 
-      //we may have more than one result if the tab has dev tools open
-      tabs.forEach(function (tab) {
+});
 
-         //now check the tabs url
-         if (controller.isApprovedUrl(tab.url)) {
-            //make this the currently active tab
-            controller.activeTargetId = tab.id;
-            console.log("target tab changed ", controller.activeTargetId);
-         }
+//capture window switching events
+chrome.windows.onFocusChanged.addListener(function(windowId) {
 
-      });
-
-   });
+  findActiveTab();
 
 });
 
 //Listen for keyboard shortcut presses
 chrome.commands.onCommand.addListener(function (command) {
+
   switch (command) {
+
     case "hidden_fields":
     case "max_lengths":
       controller.update(command);
       break;
+
  }
 
 });
