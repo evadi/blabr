@@ -156,6 +156,7 @@ chrome.commands.onCommand.addListener(function (command) {
 
     case "hidden_fields":
     case "max_lengths":
+    case "toggle_validation":
       controller.update(command);
       break;
 

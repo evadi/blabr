@@ -176,7 +176,7 @@ var UIBuilder = (function() {
    };
 
    //build the overlay used to display field data
-   UIBuilder.prototype.toggleOverlay = function (data) {
+   UIBuilder.prototype.execute = function (data) {
       this.buildOverlay();
       var isActive = (this.overlay.style.height === "400px");
 
@@ -195,7 +195,7 @@ var UIBuilder = (function() {
    };
 
    //removes the overlay from the DOM
-   UIBuilder.prototype.removeOverlay = function () {
+   UIBuilder.prototype.disable = function () {
       if (this.overlay) {
          document.body.removeChild(this.overlay);
          this.overlay = undefined;
@@ -453,6 +453,93 @@ var UIMaxLengthBuilder = (function (_super) {
   return UIMaxLengthBuilder;
 })(UIBuilder);
 
+//handles the enabling and disabling of jquery validation within the page
+var validationToggler = (function () {
+
+    function validationToggler() {
+      this.validationDisabled = false;
+      this.indicatorId = "blabrJqvi"
+      this.indicator;
+    }
+
+    //toggle validation on and off
+    validationToggler.prototype.execute = function () {
+
+      if (this.validationDisabled){
+        //turn validation back on
+        this.turnOn();
+      }
+      else {
+        //turn validation off
+        this.turnOff();
+      }
+
+    };
+
+    //turn on jquery validation
+    validationToggler.prototype.turnOn = function () {
+      this.validationDisabled = false;
+
+      var inputs = document.querySelectorAll("input[type='submit'], button[type='submit']");
+      for(var i = 0; i < inputs.length; i++){
+        inputs[i].className = inputs[i].className.replace( /(?:^|\s)cancel(?!\S)/ , '' );
+      }
+
+      this.toggleIndicator();
+    };
+
+    //turn off jquery validation
+    validationToggler.prototype.turnOff = function () {
+      this.validationDisabled = true;
+
+      var inputs = document.querySelectorAll("input[type='submit'], button[type='submit']");
+      for(var i = 0; i < inputs.length; i++){
+        inputs[i].className += " cancel";
+      }
+
+      this.toggleIndicator();
+    };
+
+    //disable the validation toggler. Turn validation back on
+    validationToggler.prototype.disable = function () {
+      this.turnOn();
+    };
+
+    validationToggler.prototype.toggleIndicator = function () {
+
+      if (!this.indicator){
+
+        this.indicator = document.createElement("div");
+        this.indicator.id = this.indicatorId;
+        this.indicator.style.background = "#000";
+        this.indicator.style.position = "fixed";
+        this.indicator.style.bottom = "10px"
+        this.indicator.style.left = "10px";
+        this.indicator.style.zIndex = "900000";
+        this.indicator.style.fontFamily = "Arial";
+        this.indicator.style.fontSize = "11px";
+        this.indicator.style.color = "#fff";
+        this.indicator.style.padding = "8px";
+        this.indicator.style.borderRadius = "25px";
+        this.indicator.style.opacity = "0.8";
+        this.indicator.innerHTML = "Client validation off";
+
+        document.body.appendChild(this.indicator);
+
+      }
+      else {
+
+        document.body.removeChild(document.getElementById(this.indicatorId));
+        this.indicator = undefined;
+
+      }
+
+    };
+
+    return validationToggler;
+
+})();
+
 //Used to perform various operations on the page
 var pageManager = (function() {
 
@@ -473,10 +560,10 @@ var pageManager = (function() {
          },
          PAGE: {
             output: function (builder, data) {
-               builder.toggleOverlay(data, true);
+               builder.execute(data, true);
             },
             clear: function (builder) {
-               builder.removeOverlay();
+               builder.disable();
             }
          }
       });
@@ -494,6 +581,12 @@ var pageManager = (function() {
           show: function (output) {
             var data = PageReader.getMaxLengthFields();
             output(this.builder, data);
+          }
+        },
+        toggle_validation: {
+          builder: new validationToggler(),
+          show: function (output) {
+            output(this.builder);
           }
         }
       });

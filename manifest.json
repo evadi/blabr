@@ -47,6 +47,13 @@
        },
        "description": "Show max length information",
        "global": false
+     },
+     "toggle_validation": {
+       "suggested_key": {
+         "default": "Ctrl+Shift+U"
+       },
+       "description": "Toggle jQuery Validation on and off",
+       "global": false
      }
   }
 }
